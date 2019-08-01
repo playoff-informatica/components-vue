@@ -1,6 +1,6 @@
 <template>
   <div class="list-group shadow">
-    <vue-bootstrap-typeahead-list-item
+    <vue-bootstrap-typeahead-list-item 
       v-for="(item, id) in matchedItems" :key="id"
       :data="item.data"
       :html-text="highlight(item.text)"
@@ -12,6 +12,12 @@
         <slot name="suggestion" v-bind="{ data, htmlText }" />
       </template>
     </vue-bootstrap-typeahead-list-item>
+
+    <a tabindex="0" href="#" class="vbst-item list-group-item list-group-item-action" v-if="showNotFound && matchedItems.length < 10" @click="handleHit({id: 0, text: query, data: 'NOT_FOUND_ITEM'}, $event)">
+      <div class="notFoundItem p-0 text-center">
+          <p class="m-0 py-3">{{ notFoundText }}</p>
+      </div>
+    </a>
   </div>
 </template>
 
@@ -56,7 +62,9 @@ export default {
     minMatchingChars: {
       type: Number,
       default: 2
-    }
+    },
+    notFoundText: String,
+    showNotFound: Boolean
   },
 
   computed: {
@@ -80,20 +88,8 @@ export default {
       if (this.query.length === 0 || this.query.length < this.minMatchingChars) {
         return []
       }
-
-      const re = new RegExp(this.escapedQuery, 'gi')
-
-      // Filter, sort, and concat
-      return this.data
-        .filter(i => i.text.match(re) !== null)
-        .sort((a, b) => {
-          const aIndex = a.text.indexOf(a.text.match(re)[0])
-          const bIndex = b.text.indexOf(b.text.match(re)[0])
-
-          if (aIndex < bIndex) { return -1 }
-          if (aIndex > bIndex) { return 1 }
-          return 0
-        }).slice(0, this.maxMatches)
+      
+      return this.data;
     }
   },
 
@@ -105,3 +101,13 @@ export default {
   }
 }
 </script>
+<style scoped>
+.notFoundItem > p {
+	color: #347cb7;
+	font-size: 15px;
+}
+
+.notFoundItem {
+	background-color: #f5fcff;
+}
+</style>

@@ -17,6 +17,8 @@
         @blur="handleBlur"
         @input="handleInput($event.target.value)"
         autocomplete="off"
+        :name="inputName"
+        :id="inputId"
       />
       <div v-if="$slots.append || append" class="input-group-append">
         <slot name="append">
@@ -27,23 +29,22 @@
     <vue-bootstrap-typeahead-list
       class="vbt-autcomplete-list"
       ref="list"
-      v-show="isFocused && data.length > 0"
+      :style="{width: width}"
+      v-show="isFocused"
       :query="inputValue"
       :data="formattedData"
       :background-variant="backgroundVariant"
       :text-variant="textVariant"
       :maxMatches="maxMatches"
       :minMatchingChars="minMatchingChars"
+      :notFoundText="notFoundText"
+      :showNotFound="showNotFound"
       @hit="handleHit"
     >
       <!-- pass down all scoped slots -->
       <template v-for="(slot, slotName) in $scopedSlots" :slot="slotName" slot-scope="{ data, htmlText }">
         <slot :name="slotName" v-bind="{ data, htmlText }"></slot>
       </template>
-      <!-- below is the right solution, however if the user does not provide a scoped slot, vue will still set $scopedSlots.suggestion to a blank scope
-      <template v-if="$scopedSlots.suggestion" slot="suggestion" slot-scope="{ data, htmlText }">
-        <slot name="suggestion" v-bind="{ data, htmlText }" />
-      </template>-->
     </vue-bootstrap-typeahead-list>
   </div>
 </template>
@@ -94,7 +95,27 @@ export default {
     },
     placeholder: String,
     prepend: String,
-    append: String
+    append: String,
+    notFoundText: {
+      type: String,
+      default: ""
+    },
+    showNotFound: {
+      type: Boolean,
+      default: false
+    },
+    width: {
+      type: String,
+      default: "auto"
+    },
+    inputName: {
+      type: String,
+      default: ""
+    },
+    inputId: {
+      type: String,
+      default: ""
+    }
   },
 
   computed: {
@@ -120,10 +141,9 @@ export default {
     resizeList(el) {
       const rect = el.getBoundingClientRect()
       const listStyle = this.$refs.list.$el.style
-
       // Set the width of the list on resize
+      rect.width = this.width == "auto" ? rect.width : this.width;
       listStyle.width = rect.width + 'px'
-
       // Set the margin when the prepend prop or slot is populated
       // (setting the "left" CSS property doesn't work)
       if (this.$refs.prependDiv) {
@@ -136,7 +156,7 @@ export default {
       if (typeof this.value !== 'undefined') {
         this.$emit('input', evt.text)
       }
-
+      
       this.inputValue = evt.text
       this.$emit('hit', evt.data)
       this.$refs.input.blur()
@@ -186,7 +206,7 @@ export default {
   .vbt-autcomplete-list {
     padding-top: 5px;
     position: absolute;
-    max-height: 350px;
+    max-height: none;
     overflow-y: auto;
     z-index: 999;
   }
