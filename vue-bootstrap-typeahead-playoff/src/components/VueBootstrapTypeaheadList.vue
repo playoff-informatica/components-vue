@@ -3,6 +3,7 @@
     <vue-bootstrap-typeahead-list-item 
       v-for="(item, id) in matchedItems" :key="id"
       :data="item.data"
+      :selected="item.selected"
       :html-text="highlight(item.text)"
       :background-variant="backgroundVariant"
       :text-variant="textVariant"
@@ -13,7 +14,7 @@
       </template>
     </vue-bootstrap-typeahead-list-item>
 
-    <a tabindex="0" href="#" class="vbst-item list-group-item list-group-item-action" v-if="showNotFound && matchedItems.length < 10" @click="handleHit({id: 0, text: query, data: 'NOT_FOUND_ITEM'}, $event)">
+    <a tabindex="0" href="#" class="vbst-item list-group-item list-group-item-action" v-if="showNotFound && matchedItems.length < 10" @click="handleHit({id: 0, data: 'NOT_FOUND_ITEM', text: query, selected: false}, $event)">
       <div class="notFoundItem p-0 text-center">
           <p class="m-0 py-3">{{ notFoundText }}</p>
       </div>

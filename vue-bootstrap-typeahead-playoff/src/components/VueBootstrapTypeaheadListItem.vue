@@ -17,7 +17,7 @@ export default {
   name: 'VueBootstrapTypeaheadListItem',
 
   props: {
-    data: {},
+		data: {},
     htmlText: {
       type: String
     },
@@ -26,16 +26,18 @@ export default {
     },
     textVariant: {
       type: String
-    }
-  },
-
-  data() {
-    return {
-      active: false
+    },
+    selected: {
+      type: Boolean,
+      default: false
     }
   },
 
   computed: {
+    active() {
+      return this.selected;
+    },
+
     textClasses() {
       let classes = ''
       classes += this.active ? 'active' : ''

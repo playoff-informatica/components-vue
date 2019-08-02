@@ -16,6 +16,7 @@
         @focus="isFocused = true"
         @blur="handleBlur"
         @input="handleInput($event.target.value)"
+        @keydown="moveArrows($event)"
         autocomplete="off"
         :name="inputName"
         :id="inputId"
@@ -131,7 +132,8 @@ export default {
         return {
           id: i,
           data: d,
-          text: this.serializer(d)
+          text: this.serializer(d),
+          selected: this.indexArrowItem == i
         }
       })
     }
@@ -178,11 +180,53 @@ export default {
       if (typeof this.value !== 'undefined') {
         this.$emit('input', newValue)
       }
+    },
+
+    moveArrows(event) {
+      if(!this.isFocused) {
+        return false;
+      }
+
+      switch(event.code) {
+        case "ArrowDown":
+          event.preventDefault();
+          if(this.indexArrowItem == null) {
+            this.indexArrowItem = 0;
+          } else if(this.indexArrowItem != null && this.indexArrowItem < this.data.length - 1) {
+            this.indexArrowItem++;
+          }
+          this.$forceUpdate();
+
+          break;
+        case "ArrowUp":
+          event.preventDefault();
+          if(this.indexArrowItem == null) {
+            this.indexArrowItem = 0;
+          } else if(this.indexArrowItem != null && this.indexArrowItem > 0) {
+            this.indexArrowItem--;
+          }
+          this.$forceUpdate();
+
+          break;
+        case "Enter":
+          event.preventDefault();
+          var selectedItem = this.formattedData.filter((item, index) => {
+            return item.selected;
+          });
+
+          if(selectedItem.length == 0) {
+            return false;
+          }
+
+          this.handleHit(selectedItem[0]);
+          break;
+      }
     }
   },
 
   data() {
     return {
+      indexArrowItem: null,
       isFocused: false,
       inputValue: ''
     }
