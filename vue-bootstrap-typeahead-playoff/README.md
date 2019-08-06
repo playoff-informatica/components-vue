@@ -121,7 +121,7 @@ prepend | `String` | | Text to be prepended to the `input-group`
 append | `String` | | Text to be appended to the `input-group`
 notFoundText | `String` | | Text to show if there are no results
 showNotFound | `Boolean` | | Show text if there are no results
-width | `String` | | Width of the input
+width | `String` | | Width of the input, if not specified, will fit the input
 inputName | `String` | | Attribute `name` of the input
 inputId | `String` | | Attribute `id` of the input
 
