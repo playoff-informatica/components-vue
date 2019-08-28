@@ -175,4 +175,3 @@ Please note that active development is done on the `Development` branch. PR's ar
 - [plottr.io](https://plottr.io) - Plan and map your running/cycling routes. This component is an offshoot from this project.
 
 Send a pull request to add your site to this list!
-
